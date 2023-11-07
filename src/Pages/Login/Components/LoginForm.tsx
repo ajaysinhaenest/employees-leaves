@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { loginFields } from '../Fields/login.fields'
 import { toast } from 'react-toastify'
 
-const LoginForm = observer(({ store }: any) => {
+const LoginForm = observer(() => {
     // const [users, setUsers] = useState([])
     const navigate = useNavigate()
     const form = useMemo(() => getMobxReactFormValidation(loginFields), [])
@@ -94,4 +94,4 @@ const LoginForm = observer(({ store }: any) => {
     )
 })
 
-export default inject('store')(LoginForm)
+export default inject('employeeStore')(LoginForm)

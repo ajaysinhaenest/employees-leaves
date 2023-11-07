@@ -13,6 +13,7 @@ import getMobxReactFormValidation from '../../../../Shared/MobxValidation/MobxRe
 import { employeeFields } from './Fields/employee.fields'
 import { IEmployee } from '../../../../Shared/Interfaces/employee.interface'
 import { EmployeeStore } from '../../../../Shared/Stores/employee.store'
+import { IUser } from '../../../../Shared/Interfaces/registration.interface'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -34,8 +35,7 @@ interface Props {
 
 const AddEmployeeForm: FC<Props> = observer(
     ({ open, setOpen, employeesList, setEmployeesList }: Props) => {
-        // const [employeesList, setEmployeesList] = useState<IEmployee[]>([])
-        const [, setUsers] = useState([])
+        const [users, setUsers] = useState<IUser[]>([])
         const form = useMemo(
             () => getMobxReactFormValidation(employeeFields),
             [],
@@ -48,16 +48,15 @@ const AddEmployeeForm: FC<Props> = observer(
 
             setEmployeesList(storedEmployeesList)
 
-            const storedData = localStorage.getItem('users')
-            if (storedData) {
-                setUsers(JSON.parse(storedData))
+            const storedUsers = localStorage.getItem('users')
+            if (storedUsers) {
+                setUsers(JSON.parse(storedUsers))
             }
         }, [])
 
         const handleAddEmployee = (e: React.FormEvent) => {
             e.preventDefault()
-            form.values()
-
+            console.log(form.values())
             form.submit({
                 onSuccess: () => {
                     console.log('hello world')
@@ -74,50 +73,40 @@ const AddEmployeeForm: FC<Props> = observer(
                             { ...form.values(), admin: false },
                         ]),
                     )
+                    setUsers((prevState): IUser[] => [
+                        ...prevState,
+                        {
+                            name:
+                                form.values().firsName +
+                                ' ' +
+                                form.values().lastName,
+                            email: form.values().email,
+                            password: form.values().password,
+                            admin: false,
+                        },
+                    ])
+                    localStorage.setItem(
+                        'users',
+                        JSON.stringify([
+                            ...users,
+                            {
+                                name:
+                                    form.values().firstName +
+                                    ' ' +
+                                    form.values().lastName,
+                                email: form.values().email,
+                                password: form.values().password,
+                                admin: false,
+                            },
+                        ]),
+                    )
                     form.clear()
                     setOpen(false)
-
-                    // if (form.values()) {
-                    //     setUsers((prevState) => [
-                    //         ...prevState,
-
-                    //     ])
-
-                    //     localStorage.setItem(
-                    //         'users',
-                    //         JSON.stringify([
-                    //             ...users,
-                    //             { ...form.values(), notifications: [] },
-                    //         ]),
-                    //     )
-
-                    //     localStorage.setItem(
-                    //         'login_user',
-                    //         JSON.stringify({
-                    //             ...form.values(),
-                    //             notifications: [],
-                    //         }),
-                    //     )
-                    // } else {
-                    //     setUsers((prevState) => [...prevState])
-
-                    //     localStorage.setItem(
-                    //         'users',
-                    //         JSON.stringify([...users, form.values()]),
-                    //     )
-
-                    //     localStorage.setItem(
-                    //         'login_user',
-                    //         JSON.stringify(form.values()),
-                    //     )
-                    // }
-                    // alert('User registered successfully.')
-                    // form.reset()
                 },
                 onError: (error: string) => console.log(error),
             })
         }
-        console.log(employeesList)
+        // console.log(employeesList)
         return (
             <StyledModal
                 open={open}

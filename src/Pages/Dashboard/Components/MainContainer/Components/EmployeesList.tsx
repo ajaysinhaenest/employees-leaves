@@ -1,5 +1,6 @@
 import { IEmployee } from '../../../../../Shared/Interfaces/employee.interface'
 import {
+    TextField,
     Box,
     Table,
     TableBody,
@@ -10,6 +11,7 @@ import {
     Paper,
 } from '@mui/material'
 import { inject, observer } from 'mobx-react'
+import { useState } from 'react'
 
 interface Props {
     employeesList: IEmployee[]
