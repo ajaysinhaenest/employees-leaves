@@ -1,6 +1,4 @@
 import { Box, Container, Button, Typography, styled } from '@mui/material'
-import Admin from './Components/Admin'
-import User from './Components/User'
 import { useState } from 'react'
 import RegistrationForm from './Components/RegistrationForm'
 
@@ -16,7 +14,7 @@ const Registration = () => {
             <Box
                 borderRadius={1}
                 mx='auto'
-                my={20}
+                my={16}
                 width={360}
                 p={2}
                 bgcolor='white'
@@ -39,7 +37,7 @@ const Registration = () => {
                         size='small'
                         onClick={() => setIsAdmin(false)}
                     >
-                        <Typography variant='subtitle2'>User</Typography>
+                        <Typography variant='subtitle2'>Employee</Typography>
                     </StyledButton>
                     <StyledButton
                         sx={{
@@ -55,8 +53,6 @@ const Registration = () => {
                     </StyledButton>
                 </Box>
                 <RegistrationForm isAdmin={isAdmin} />
-                {/* {isAdmin === 'user' && <User />}
-                {isAdmin === 'admin' && <Admin />} */}
             </Box>
         </Container>
     )

@@ -1,6 +1,10 @@
+import { EmployeeStore } from './employee.store'
+
 class RootStore {
-    loginStore = 1
-    constructor() {}
+    employeeStore
+    constructor() {
+        this.employeeStore = new EmployeeStore(this)
+    }
 }
 
 export default RootStore
