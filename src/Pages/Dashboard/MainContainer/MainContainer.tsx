@@ -42,8 +42,8 @@ const MainContainer = ({
                 <Searchbar handleFilter={handleFilter} />
             </Box>
             <EmployeesList
-                employeesList={filteredList}
-                setEmployeesList={setEmployeesList}
+                filteredList={filteredList}
+                setFilteredList={setFilteredList}
             />
         </Box>
     )

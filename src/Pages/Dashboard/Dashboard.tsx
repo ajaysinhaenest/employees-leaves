@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Box } from '@mui/material'
-import Sidebar from './Components/Sidebar/Sidebar'
+import Sidebar from './Sidebar/Sidebar'
 import MainContainer from './Components/MainContainer/MainContainer'
 import AddEmployeeForm from './Components/AddEmployeeForm/AddEmployeeForm'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
-import { employeesListData } from '../../Shared/Utils/Constant'
+import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false)
@@ -13,6 +13,8 @@ const Dashboard = () => {
 
     useEffect(() => {
         // localStorage.setItem('employeesList', JSON.stringify(employeesListData))
+
+        // localStorage.setItem('users', JSON.stringify(usersListData))
 
         // const updateData = employeesListData.map((data) => {
         //     return {
@@ -30,6 +32,7 @@ const Dashboard = () => {
         const employeesListData = JSON.parse(
             localStorage.getItem('employeesList') || 'null',
         )
+
         setEmployeesList(employeesListData)
         setFilteredList(employeesListData)
     }, [])
@@ -48,6 +51,8 @@ const Dashboard = () => {
                 setOpen={setOpen}
                 employeesList={employeesList}
                 setEmployeesList={setEmployeesList}
+                filteredList={filteredList}
+                setFilteredList={setFilteredList}
             />
         </Box>
     )
