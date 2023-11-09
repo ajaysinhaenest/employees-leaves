@@ -1,38 +1,47 @@
 import { TextField, Typography, Box, Button } from '@mui/material'
-import getMobxReactFormValidation from '../../../Shared/MobxValidation/MobxReactFormValidation'
+import getMobxReactFormValidation from '../../Shared/MobxValidation/MobxReactFormValidation'
 import { useEffect, useMemo, useState } from 'react'
 import { inject, observer } from 'mobx-react'
-import { IUser } from '../../../Shared/Interfaces/user.interface'
+import { IUser } from '../../Shared/Interfaces/user.interface'
 import { Link, useNavigate } from 'react-router-dom'
-import { loginFields } from '../Fields/login.fields'
+import { loginFields } from './login.fields'
 import { toast } from 'react-toastify'
+import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 
 const LoginForm = observer(() => {
-    const [users, setUsers] = useState<IUser[]>([])
+    const [users, setUsers] = useState<IUser>({
+        name: '',
+        email: '',
+        password: '',
+        admin: false,
+        block: false,
+        blockCount: 0,
+    })
     const navigate = useNavigate()
 
     const form = useMemo(() => getMobxReactFormValidation(loginFields), [])
 
-    // useEffect(() => {
-    //     const employeesList =
-    //         JSON.parse(localStorage.getItem('employeesList') || '') || []
+    useEffect(() => {
+        const employeesList: IEmployee[] =
+            JSON.parse(localStorage.getItem('employeesList') || '') || []
 
-    //     const users = JSON.parse(localStorage.getItem('users') || '') || []
+        const users: IUser[] =
+            JSON.parse(localStorage.getItem('users') || '') || []
 
-    //     const secondArrayMap = users.reduce((total, item) => {
-    //         total[item.email] = item.block
-    //         return total
-    //     }, {})
+        const secondArrayMap = users.reduce((total, item) => {
+            total[item.email] = item.block
+            return total
+        }, {})
 
-    //     const updatedFirstArray = employeesList.map((item) => ({
-    //         ...item,
-    //         block: secondArrayMap[item.email] || item.block,
-    //     }))
+        const updatedFirstArray = employeesList.map((item) => ({
+            ...item,
+            block: secondArrayMap[item.email] || item.block,
+        }))
 
-    //     localStorage.setItem('employeesList', JSON.stringify(updatedFirstArray))
-    // }, [users])
+        localStorage.setItem('employeesList', JSON.stringify(updatedFirstArray))
+    }, [users])
 
-    const blockUnblock = (loginUser): IUser[] => {
+    const blockUnblock = (loginUser: IUser): IUser[] => {
         const storedUsers: IUser[] =
             JSON.parse(localStorage.getItem('users') || '') || []
         const users = storedUsers.map((el) => {
@@ -59,15 +68,23 @@ const LoginForm = observer(() => {
             return
         }
 
+        if (loginUser.admin) {
+            toast.error('Login failed. Check your credentials.')
+            toast.error(`hint: ${loginUser.password.slice(0, 8)}`)
+            return
+        }
+
         if (loginUser.password !== password) {
             toast.error('Login failed. Check your credentials.')
             loginUser.blockCount = loginUser.blockCount + 1
-            if (loginUser.blockCount > 2) {
+            if (loginUser.blockCount === 3) {
                 loginUser.block = true
+                loginUser.blockCount = 0
                 toast.error(
                     'You have tried max number of limit. You are blocked..',
                 )
             }
+            setUsers(loginUser)
             blockUnblock(loginUser)
             return
         }
@@ -75,6 +92,7 @@ const LoginForm = observer(() => {
         // Unblock user if all validation checks passed
         loginUser.block = false
         loginUser.blockCount = 0
+        setUsers(loginUser)
         blockUnblock(loginUser)
         navigate(loginUser.admin ? '/dashboard' : '/employee')
         form.clear()

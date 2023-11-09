@@ -1,6 +1,5 @@
-import { IEmployee } from '../../../../../Shared/Interfaces/employee.interface'
+import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import {
-    TextField,
     Button,
     Box,
     Table,
@@ -13,7 +12,7 @@ import {
     Typography,
 } from '@mui/material'
 import { inject, observer } from 'mobx-react'
-import { useState } from 'react'
+import { IUser } from '../../../Shared/Interfaces/user.interface'
 
 interface Props {
     filteredList: IEmployee[]
@@ -21,24 +20,22 @@ interface Props {
 }
 const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
     const handleBlockUser = (email: string) => {
-        const employeesList = JSON.parse(
-            localStorage.getItem('employeesList') || 'null',
+        const employeesList: IEmployee[] = JSON.parse(
+            localStorage.getItem('employeesList') || '',
         )
-        const users = JSON.parse(localStorage.getItem('users') || 'null')
+        const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
 
-        const updatedEmployeesList = employeesList.map(
-            (el: IEmployee, i: number) => {
-                if (el.email === email) {
-                    return {
-                        ...el,
-                        block: false,
-                    }
+        const updatedEmployeesList = employeesList.map((el) => {
+            if (el.email === email) {
+                return {
+                    ...el,
+                    block: false,
                 }
-                return el
-            },
-        )
+            }
+            return el
+        })
 
-        const updatedUsers = users.map((el: IEmployee, i: number) => {
+        const updatedUsers = users.map((el) => {
             if (el.email === email) {
                 return {
                     ...el,
@@ -57,6 +54,7 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
         setFilteredList(updatedEmployeesList)
     }
 
+    console.log(filteredList)
     return (
         <Box mt={1}>
             <TableContainer component={Paper}>

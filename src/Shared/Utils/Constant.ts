@@ -3,7 +3,7 @@ import { IEmployee } from '../Interfaces/employee.interface'
 export const employeesListData: IEmployee[] = [
     {
         firstName: 'kakashi',
-        lastName: '',
+        lastName: 'hatake',
         email: 'kakashi@gmail.com',
         password: 'kakashi@123',
         leaves: 5,
@@ -66,7 +66,7 @@ export const usersListData = [
     },
     {
         firstName: 'kakashi',
-        lastName: '',
+        lastName: 'hatake',
         email: 'kakashi@gmail.com',
         password: 'kakashi@123',
         leaves: 5,

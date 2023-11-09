@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material'
-import Heading from './Components/Heading'
-import EmployeesList from './Components/EmployeesList'
-import { IEmployee } from '../../../../Shared/Interfaces/employee.interface'
-import Searchbar from './Components/Searchbar'
+import Heading from './Heading'
+import EmployeesList from './EmployeesList'
+import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
+import Searchbar from './Searchbar'
 import { useState } from 'react'
 
 interface Props {
@@ -23,7 +23,7 @@ const MainContainer = ({
     const handleFilter = (e: React.FormEvent, q: string) => {
         e.preventDefault()
 
-        const data = employeesList.filter((e: IEmployee) => {
+        const data = employeesList.filter((e) => {
             const nameResults = (e.firstName + e.lastName)
                 .toLowerCase()
                 .includes(q.toLowerCase())

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Box } from '@mui/material'
 import Sidebar from './Sidebar/Sidebar'
-import MainContainer from './Components/MainContainer/MainContainer'
-import AddEmployeeForm from './Components/AddEmployeeForm/AddEmployeeForm'
+import MainContainer from './MainContainer/MainContainer'
+import AddEmployeeForm from './AddEmployeeForm/AddEmployeeForm'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
 
@@ -29,9 +29,8 @@ const Dashboard = () => {
         // console.log(updateData)
         // localStorage.setItem('users', JSON.stringify(updateData))
 
-        const employeesListData = JSON.parse(
-            localStorage.getItem('employeesList') || 'null',
-        )
+        const employeesListData =
+            JSON.parse(localStorage.getItem('employeesList') || '') || []
 
         setEmployeesList(employeesListData)
         setFilteredList(employeesListData)

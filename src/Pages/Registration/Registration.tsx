@@ -1,6 +1,6 @@
 import { Box, Container, Button, Typography, styled } from '@mui/material'
 import { useState } from 'react'
-import RegistrationForm from './Components/RegistrationForm'
+import RegistrationForm from './RegistrationForm'
 
 const StyledButton = styled(Button)({
     borderRadius: 0,

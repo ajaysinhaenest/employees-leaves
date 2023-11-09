@@ -9,11 +9,11 @@ import {
 } from '@mui/material'
 import { inject, observer } from 'mobx-react'
 import { useMemo } from 'react'
-import getMobxReactFormValidation from '../../../../Shared/MobxValidation/MobxReactFormValidation'
-import { employeeFields } from './Fields/employee.fields'
-import { IEmployee } from '../../../../Shared/Interfaces/employee.interface'
-import { EmployeeStore } from '../../../../Shared/Stores/employee.store'
-import { IUser } from '../../../../Shared/Interfaces/user.interface'
+import getMobxReactFormValidation from '../../../Shared/MobxValidation/MobxReactFormValidation'
+import { employeeFields } from './employee.fields'
+import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
+import { EmployeeStore } from '../../../Shared/Stores/employee.store'
+import { IUser } from '../../../Shared/Interfaces/user.interface'
 import { toast } from 'react-toastify'
 
 const StyledModal = styled(Modal)({
@@ -46,70 +46,67 @@ const AddEmployeeForm: FC<Props> = observer(
         setFilteredList,
     }: Props) => {
         const [users, setUsers] = useState<IUser[]>([])
+
         const form = useMemo(
             () => getMobxReactFormValidation(employeeFields),
             [],
         )
 
         useEffect(() => {
-            const storedEmployeesList = JSON.parse(
-                localStorage.getItem('employeesList') || 'null',
-            )
+            // const storedEmployeesList =
+            //     JSON.parse(localStorage.getItem('employeesList') || '') || []
 
-            setEmployeesList(storedEmployeesList)
-            setFilteredList(storedEmployeesList)
+            // setEmployeesList(storedEmployeesList)
+            // setFilteredList(storedEmployeesList)
 
-            const storedUsers = localStorage.getItem('users')
-            if (storedUsers) {
-                setUsers(JSON.parse(storedUsers))
+            const storedUsers =
+                JSON.parse(localStorage.getItem('users') || '') || []
+
+            if (storedUsers.length) {
+                setUsers(storedUsers)
             }
         }, [])
 
         const handleAddEmployee = (e: React.FormEvent) => {
             e.preventDefault()
-            // console.log(form.values())
-            const { email, password } = form.values()
-            const storedData = JSON.parse(
-                localStorage.getItem('employeesList') || 'null',
-            )
-            const employee = storedData.filter(
-                (el: IEmployee) => el.email === email,
-            )
+            const { email } = form.values()
+            const storedData: IEmployee[] =
+                JSON.parse(localStorage.getItem('employeesList') || '') || []
+            const employee = storedData.filter((el) => el.email === email)
 
-            if (employee?.length) {
+            if (employee.length) {
                 toast.error('employee already exist with that email')
-                return null
+                return
             }
 
             form.submit({
                 onSuccess: () => {
-                    console.log('hello world')
+                    const data = { ...form.values() }
+                    setFilteredList((prev) => [
+                        ...prev,
+                        { ...data, admin: false },
+                    ])
+
+                    console.log(form.values())
 
                     setEmployeesList((prev) => [
                         ...prev,
-                        { ...form.values(), admin: false },
-                    ])
-                    setFilteredList((prev) => [
-                        ...prev,
-                        { ...form.values(), admin: false },
+                        { ...data, admin: false },
                     ])
 
                     localStorage.setItem(
                         'employeesList',
                         JSON.stringify([
-                            ...employeesList,
-                            { ...form.values(), admin: false },
+                            ...filteredList,
+                            { ...data, admin: false },
                         ]),
                     )
-                    setUsers((prevState): IUser[] => [
+                    setUsers((prevState) => [
                         ...prevState,
                         {
-                            name:
-                                form.values().firsName +
-                                ' ' +
-                                form.values().lastName,
-                            email: form.values().email,
-                            password: form.values().password,
+                            name: data.firsName + ' ' + data.lastName,
+                            email: data.email,
+                            password: data.password,
                             admin: false,
                             blockCount: 0,
                             block: false,
@@ -120,12 +117,9 @@ const AddEmployeeForm: FC<Props> = observer(
                         JSON.stringify([
                             ...users,
                             {
-                                name:
-                                    form.values().firstName +
-                                    ' ' +
-                                    form.values().lastName,
-                                email: form.values().email,
-                                password: form.values().password,
+                                name: data.firstName + ' ' + data.lastName,
+                                email: data.email,
+                                password: data.password,
                                 admin: false,
                             },
                         ]),
@@ -136,7 +130,8 @@ const AddEmployeeForm: FC<Props> = observer(
                 onError: (error: string) => console.log(error),
             })
         }
-        // console.log(employeesList)
+        console.log(employeesList)
+        console.log(filteredList)
         return (
             <StyledModal
                 open={open}
