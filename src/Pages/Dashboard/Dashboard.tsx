@@ -12,9 +12,9 @@ const Dashboard = () => {
     const [filteredList, setFilteredList] = useState<IEmployee[]>([])
 
     useEffect(() => {
-        // localStorage.setItem('employeesList', JSON.stringify(employeesListData))
+        localStorage.setItem('employeesList', JSON.stringify(employeesListData))
 
-        // localStorage.setItem('users', JSON.stringify(usersListData))
+        localStorage.setItem('users', JSON.stringify(usersListData))
 
         // const updateData = employeesListData.map((data) => {
         //     return {
@@ -29,9 +29,7 @@ const Dashboard = () => {
         // console.log(updateData)
         // localStorage.setItem('users', JSON.stringify(updateData))
 
-        const employeesListData =
-            JSON.parse(localStorage.getItem('employeesList') || '') || []
-
+        // const employeesLis
         setEmployeesList(employeesListData)
         setFilteredList(employeesListData)
     }, [])

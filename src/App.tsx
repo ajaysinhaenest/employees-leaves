@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom'
 import Header from './Shared/Components/Header'
 import Login from './Pages/Login/Login'
-import Registration from './Pages/Registration/Registration'
+// import Registration from './Pages/Registration/Registration'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Employee from './Pages/Employee/Employee'

@@ -1,31 +1,33 @@
 import { useState, useEffect } from 'react'
 import { Box, Container, Typography, Button } from '@mui/material'
+import { IUser } from '../../Shared/Interfaces/user.interface'
+import ChangePassword from './ChangePassword'
+import ApplyForLeave from './ApplyForLeave'
 
 const Employee = () => {
-    const [user, setUser] = useState({
-        name: '',
+    const [user, setUser] = useState<IUser>({
+        firstName: '',
+        lastName: '',
         email: '',
         admin: false,
         leaves: 0,
+        availableLeaves: 0,
         password: '',
         block: false,
         blockCount: 0,
+        appliedLeaves: [],
+        disapproveLeavesComments: [],
     })
     const [changePassword, setChangePassword] = useState(false)
-    useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('login_user') || 'null')
+    const [isApply, setIsApply] = useState(false)
 
-        setUser({
-            name: user[0].firstName + ' ' + user[0].lastName,
-            email: user[0].email,
-            admin: user[0].admin,
-            leaves: user[0].leaves,
-            password: user[0].password,
-            block: user[0].block,
-            blockCount: user[0].blockCount,
-        })
-    }, [])
-    console.log(user)
+    useEffect(() => {
+        const loginUser: IUser =
+            JSON.parse(localStorage.getItem('loginUser') || '') || user
+
+        setUser(loginUser)
+    }, [changePassword, isApply])
+
     return (
         <Container>
             <Box
@@ -45,12 +47,14 @@ const Employee = () => {
                     Employee Profile
                 </Typography>
                 <Box>
-                    <Typography>Name: {user.name}</Typography>
+                    <Typography>
+                        Name: {user.firstName + ' ' + user.lastName}
+                    </Typography>
                     <Typography>Email: {user.email}</Typography>
                     <Typography>Total No. of leaves: {user.leaves}</Typography>
-                    <Typography>
+                    {/* <Typography>
                         Status: {user.block ? 'blocked' : 'active'}
-                    </Typography>
+                    </Typography> */}
                 </Box>
                 <Box textAlign='center' mt={5}>
                     <Button
@@ -58,13 +62,39 @@ const Employee = () => {
                         color='secondary'
                         size='small'
                         fullWidth
+                        onClick={() => setChangePassword(!changePassword)}
                     >
                         Change Password
                     </Button>
                 </Box>
-                {/* <Box>
 
-                </Box> */}
+                <Box textAlign='center' mt={5}>
+                    <Button
+                        disabled={!user.availableLeaves}
+                        variant='contained'
+                        color='success'
+                        size='small'
+                        fullWidth
+                        onClick={() => setIsApply(!isApply)}
+                    >
+                        Apply for Leave
+                    </Button>
+                </Box>
+
+                <Box>
+                    <ChangePassword
+                        user={user}
+                        changePassword={changePassword}
+                        setChangePassword={setChangePassword}
+                    />
+                </Box>
+                <Box>
+                    <ApplyForLeave
+                        user={user}
+                        isApply={isApply}
+                        setIsApply={setIsApply}
+                    />
+                </Box>
             </Box>
         </Container>
     )

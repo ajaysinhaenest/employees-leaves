@@ -25,6 +25,10 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
         )
         const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
 
+        const user = users.find((u) => u.email === email)
+
+        const updatedUser = { ...user, block: false }
+
         const updatedEmployeesList = employeesList.map((el) => {
             if (el.email === email) {
                 return {
@@ -52,6 +56,8 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
 
         localStorage.setItem('users', JSON.stringify(updatedUsers))
         setFilteredList(updatedEmployeesList)
+
+        localStorage.setItem('loginUser', JSON.stringify(updatedUser))
     }
 
     console.log(filteredList)

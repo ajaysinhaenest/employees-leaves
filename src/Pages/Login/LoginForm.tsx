@@ -10,12 +10,17 @@ import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 
 const LoginForm = observer(() => {
     const [users, setUsers] = useState<IUser>({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
         admin: false,
         block: false,
         blockCount: 0,
+        leaves: 0,
+        availableLeaves: 0,
+        appliedLeaves: [],
+        disapproveLeavesComments: [],
     })
     const navigate = useNavigate()
 
@@ -52,6 +57,7 @@ const LoginForm = observer(() => {
             return el
         })
         localStorage.setItem('users', JSON.stringify(users))
+        localStorage.setItem('loginUser', JSON.stringify(loginUser))
         return users
     }
 

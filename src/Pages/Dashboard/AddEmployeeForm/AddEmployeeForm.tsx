@@ -81,35 +81,30 @@ const AddEmployeeForm: FC<Props> = observer(
 
             form.submit({
                 onSuccess: () => {
-                    const data = { ...form.values() }
-                    setFilteredList((prev) => [
-                        ...prev,
-                        { ...data, admin: false },
-                    ])
+                    const data = {
+                        ...form.values(),
+                        leaves: Number(form.values().leaves),
+                        admin: false,
+                        block: false,
+                        blockCount: 0,
+                        availableLeaves: Number(form.values().leaves),
+                        appliedLeaves: [],
+                        disapproveLeavesComments: [],
+                    }
+                    setFilteredList((prev) => [...prev, { ...data }])
 
                     console.log(form.values())
 
-                    setEmployeesList((prev) => [
-                        ...prev,
-                        { ...data, admin: false },
-                    ])
+                    setEmployeesList((prev) => [...prev, { ...data }])
 
                     localStorage.setItem(
                         'employeesList',
-                        JSON.stringify([
-                            ...filteredList,
-                            { ...data, admin: false },
-                        ]),
+                        JSON.stringify([...filteredList, { ...data }]),
                     )
                     setUsers((prevState) => [
                         ...prevState,
                         {
-                            name: data.firsName + ' ' + data.lastName,
-                            email: data.email,
-                            password: data.password,
-                            admin: false,
-                            blockCount: 0,
-                            block: false,
+                            ...data,
                         },
                     ])
                     localStorage.setItem(
@@ -117,10 +112,7 @@ const AddEmployeeForm: FC<Props> = observer(
                         JSON.stringify([
                             ...users,
                             {
-                                name: data.firstName + ' ' + data.lastName,
-                                email: data.email,
-                                password: data.password,
-                                admin: false,
+                                ...data,
                             },
                         ]),
                     )
