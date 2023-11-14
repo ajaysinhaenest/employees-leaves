@@ -117,6 +117,7 @@ const LeavesNotification = observer(
 
             const updatedFilteredData = {
                 ...filteredData,
+                // availableLeaves: filteredData.availableLeaves - 1,
                 appliedLeaves: updatedAppliedLeaves,
             }
 
@@ -178,6 +179,7 @@ const LeavesNotification = observer(
 
             const updatedFilteredData = {
                 ...filteredData,
+                availableLeaves: filteredData.availableLeaves + 1,
                 appliedLeaves: updatedAppliedLeaves,
             }
 

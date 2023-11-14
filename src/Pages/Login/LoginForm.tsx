@@ -104,7 +104,6 @@ const LoginForm = observer(() => {
         form.clear()
     }
 
-    console.log(users)
     return (
         <Box>
             <form action=''>

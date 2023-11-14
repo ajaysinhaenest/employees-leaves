@@ -9,7 +9,6 @@ import Dashboard from './Pages/Dashboard/Dashboard'
 function App() {
     return (
         <>
-            {/* <Header /> */}
             <Outlet />
             <ToastContainer />
         </>

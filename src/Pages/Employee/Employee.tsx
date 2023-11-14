@@ -25,10 +25,10 @@ const Employee = () => {
         const loginUser: IUser =
             JSON.parse(localStorage.getItem('loginUser') || '') || user
 
-        console.log(!user.availableLeaves)
         setUser(loginUser)
     }, [changePassword, isApply])
 
+    console.log(user)
     return (
         <Container>
             <Box
@@ -53,13 +53,14 @@ const Employee = () => {
                     </Typography>
                     <Typography>Email: {user.email}</Typography>
                     <Typography>
-                        {!user.availableLeaves &&
-                            'You can not take more leaves.'}
-                        Total No. of leaves: {user.leaves}
+                        {!user.availableLeaves ? (
+                            <Typography color='error'>
+                                You can not take more leaves.
+                            </Typography>
+                        ) : (
+                            ' available leaves:' + user.availableLeaves
+                        )}
                     </Typography>
-                    {/* <Typography>
-                        Status: {user.block ? 'blocked' : 'active'}
-                    </Typography> */}
                 </Box>
                 <Box textAlign='center' mt={5}>
                     <Button
@@ -75,14 +76,13 @@ const Employee = () => {
 
                 <Box textAlign='center' mt={5}>
                     <Button
-                        disabled={!user.availableLeaves}
                         variant='contained'
                         color='success'
                         size='small'
                         fullWidth
                         onClick={() => setIsApply(!isApply)}
                     >
-                        Apply for Leave
+                        Leaves Details
                     </Button>
                 </Box>
 
@@ -96,6 +96,7 @@ const Employee = () => {
                 <Box>
                     <ApplyForLeave
                         user={user}
+                        setUser={setUser}
                         isApply={isApply}
                         setIsApply={setIsApply}
                     />
