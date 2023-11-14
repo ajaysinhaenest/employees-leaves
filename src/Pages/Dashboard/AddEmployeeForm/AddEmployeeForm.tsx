@@ -15,6 +15,7 @@ import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import { EmployeeStore } from '../../../Shared/Stores/employee.store'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
 import { toast } from 'react-toastify'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -132,6 +133,17 @@ const AddEmployeeForm: FC<Props> = observer(
                 aria-describedby='modal-modal-description'
             >
                 <Box width={400} bgcolor='white' p={3} borderRadius={4}>
+                    <Box
+                        sx={{
+                            cursor: 'pointer',
+                        }}
+                        color='gray'
+                        onClick={() => setOpen(false)}
+                        display='flex'
+                        justifyContent='right'
+                    >
+                        <CancelIcon />
+                    </Box>
                     <Typography variant='h6' color='gray' textAlign='center'>
                         Add new Employee
                     </Typography>

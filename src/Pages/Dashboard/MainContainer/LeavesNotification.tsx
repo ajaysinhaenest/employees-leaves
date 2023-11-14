@@ -10,6 +10,7 @@ import {
 import { inject, observer } from 'mobx-react'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 interface ILeaves {
     name: string
@@ -51,49 +52,6 @@ const LeavesNotification = observer(
         const [commentQuery, setCommentQuery] = useState('')
         const [reject, setReject] = useState('')
 
-        const handleLeaves = (email: string) => {
-            const employeesList: IEmployee[] = JSON.parse(
-                localStorage.getItem('employeesList') || '',
-            )
-            const users: IUser[] = JSON.parse(
-                localStorage.getItem('users') || '',
-            )
-
-            // const user = users.find((u) => u.email === email)
-
-            // const updatedUser = { ...user, block: false }
-
-            // const updatedEmployeesList = employeesList.map((el) => {
-            //     if (el.email === email) {
-            //         return {
-            //             ...el,
-            //             block: false,
-            //         }
-            //     }
-            //     return el
-            // })
-
-            // const updatedUsers = users.map((el) => {
-            //     if (el.email === email) {
-            //         return {
-            //             ...el,
-            //             block: false,
-            //         }
-            //     }
-            //     return el
-            // })
-
-            // localStorage.setItem(
-            //     'employeesList',
-            //     JSON.stringify(updatedEmployeesList),
-            // )
-
-            // localStorage.setItem('users', JSON.stringify(updatedUsers))
-            // setFilteredList(updatedEmployeesList)
-
-            // localStorage.setItem('loginUser', JSON.stringify(updatedUser))
-        }
-
         const handleApprove = (sub: string) => {
             const employeesList: IEmployee[] = JSON.parse(
                 localStorage.getItem('employeesList') || '',
@@ -102,22 +60,23 @@ const LeavesNotification = observer(
                 localStorage.getItem('users') || '',
             )
 
-            const totalLeaves = employeesList.find(
-                (el) => el.email === filteredData.email,
-            )?.appliedLeaves
+            const totalLeaves =
+                employeesList.find((el) => el.email === filteredData.email)
+                    ?.appliedLeaves || []
 
             console.log(totalLeaves)
 
-            const updatedAppliedLeaves = totalLeaves?.map((el) => {
+            const updatedAppliedLeaves = totalLeaves.map((el) => {
                 if (el.subject === sub) {
                     el.status = 'approved'
                 }
                 return el
             })
 
+            setAppliedLeaves(updatedAppliedLeaves)
+
             const updatedFilteredData = {
                 ...filteredData,
-                // availableLeaves: filteredData.availableLeaves - 1,
                 appliedLeaves: updatedAppliedLeaves,
             }
 
@@ -143,11 +102,6 @@ const LeavesNotification = observer(
             )
 
             localStorage.setItem('users', JSON.stringify(updatedUsers))
-
-            const filteredAppliedLeaves = appliedLeavesData.filter(
-                (el) => el.subject !== sub,
-            )
-            setAppliedLeaves(filteredAppliedLeaves)
         }
 
         const handleReject = (sub: string) => {
@@ -163,19 +117,21 @@ const LeavesNotification = observer(
                 localStorage.getItem('users') || '',
             )
 
-            const totalLeaves = employeesList.find(
-                (el) => el.email === filteredData.email,
-            )?.appliedLeaves
+            const totalLeaves =
+                employeesList.find((el) => el.email === filteredData.email)
+                    ?.appliedLeaves || []
 
             console.log(totalLeaves)
 
-            const updatedAppliedLeaves = totalLeaves?.map((el) => {
+            const updatedAppliedLeaves = totalLeaves.map((el) => {
                 if (el.subject === sub) {
                     el.status = 'rejected'
                     el.disapproveComment = commentQuery
                 }
                 return el
             })
+
+            setAppliedLeaves(updatedAppliedLeaves)
 
             const updatedFilteredData = {
                 ...filteredData,
@@ -206,15 +162,10 @@ const LeavesNotification = observer(
 
             localStorage.setItem('users', JSON.stringify(updatedUsers))
 
-            const filteredAppliedLeaves = appliedLeavesData.filter(
-                (el) => el.subject !== sub,
-            )
-            setAppliedLeaves(filteredAppliedLeaves)
             setCommentQuery('')
             setReject('')
         }
 
-        // console.log(appliedLeavesData)
         return (
             <StyledModal
                 open={open}
@@ -223,6 +174,17 @@ const LeavesNotification = observer(
                 aria-describedby='modal-modal-description'
             >
                 <Box width={400} bgcolor='white' p={3} borderRadius={2}>
+                    <Box
+                        sx={{
+                            cursor: 'pointer',
+                        }}
+                        color='gray'
+                        onClick={() => setOpen(false)}
+                        display='flex'
+                        justifyContent='right'
+                    >
+                        <CancelIcon />
+                    </Box>
                     <Typography
                         textAlign='center'
                         variant='h6'
@@ -259,28 +221,30 @@ const LeavesNotification = observer(
                                         Subject: {el.subject}
                                     </Typography>
 
-                                    <Box display='flex' gap={2}>
-                                        <Button
-                                            size='small'
-                                            variant='outlined'
-                                            color='error'
-                                            onClick={() =>
-                                                handleReject(el.subject)
-                                            }
-                                        >
-                                            Reject
-                                        </Button>
-                                        <Button
-                                            size='small'
-                                            variant='outlined'
-                                            color='success'
-                                            onClick={() =>
-                                                handleApprove(el.subject)
-                                            }
-                                        >
-                                            Approve
-                                        </Button>
-                                    </Box>
+                                    {el.status === 'pending' && (
+                                        <Box display='flex' gap={2}>
+                                            <Button
+                                                size='small'
+                                                variant='outlined'
+                                                color='error'
+                                                onClick={() =>
+                                                    handleReject(el.subject)
+                                                }
+                                            >
+                                                Reject
+                                            </Button>
+                                            <Button
+                                                size='small'
+                                                variant='outlined'
+                                                color='success'
+                                                onClick={() =>
+                                                    handleApprove(el.subject)
+                                                }
+                                            >
+                                                Approve
+                                            </Button>
+                                        </Box>
+                                    )}
                                 </Box>
                                 {reject === el.subject && (
                                     <>

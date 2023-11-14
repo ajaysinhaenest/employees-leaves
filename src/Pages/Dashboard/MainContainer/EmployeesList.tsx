@@ -88,11 +88,7 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
         const filteredData = filteredList.find((el) => el.email === email)
 
         if (filteredData) {
-            setAppliedLeaves(
-                filteredData.appliedLeaves.filter(
-                    (el) => el.status === 'pending',
-                ),
-            )
+            setAppliedLeaves(filteredData.appliedLeaves)
             setFilteredData(filteredData)
         }
     }
@@ -110,7 +106,6 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                             <TableCell>Total Leaves</TableCell>
                             <TableCell>available Leaves</TableCell>
                             <TableCell>Applied Leaves</TableCell>
-                            {/* <TableCell>Applied Leaves</TableCell> */}
                             <TableCell>Status</TableCell>
                         </TableRow>
                     </TableHead>

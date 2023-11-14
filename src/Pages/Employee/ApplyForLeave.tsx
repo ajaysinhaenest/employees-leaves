@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import { IUser } from '../../Shared/Interfaces/user.interface'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { randomDateFunction } from '../../Shared/Utils/helperFunctions'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -104,6 +105,17 @@ const ApplyForLeave = ({ user, setUser, isApply, setIsApply }: Props) => {
             aria-describedby='modal-modal-description'
         >
             <Box width={800} bgcolor='white' p={3} borderRadius={4}>
+                <Box
+                    sx={{
+                        cursor: 'pointer',
+                    }}
+                    color='gray'
+                    onClick={() => setIsApply(false)}
+                    display='flex'
+                    justifyContent='right'
+                >
+                    <CancelIcon />
+                </Box>
                 <Typography
                     textAlign='center'
                     variant='h6'

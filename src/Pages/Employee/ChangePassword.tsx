@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react'
 import { toast } from 'react-toastify'
 import { IUser } from '../../Shared/Interfaces/user.interface'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -104,6 +105,17 @@ const ChangePassword = observer(
                 aria-describedby='modal-modal-description'
             >
                 <Box width={400} bgcolor='white' p={3} borderRadius={4}>
+                    <Box
+                        sx={{
+                            cursor: 'pointer',
+                        }}
+                        color='gray'
+                        onClick={() => setChangePassword(false)}
+                        display='flex'
+                        justifyContent='right'
+                    >
+                        <CancelIcon />
+                    </Box>
                     <form>
                         <TextField
                             size='small'
