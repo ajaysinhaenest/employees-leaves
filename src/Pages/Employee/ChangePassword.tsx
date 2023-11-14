@@ -40,7 +40,11 @@ const ChangePassword = observer(
             const employees: IEmployee[] =
                 JSON.parse(localStorage.getItem('employeesList') || '') || []
 
-            if (form.values().oldPassword === '') {
+            if (
+                form.values().oldPassword === '' ||
+                form.values().newPassword === '' ||
+                form.values().confirmPassword === ''
+            ) {
                 toast.error('fields are empty')
                 return
             }
@@ -88,6 +92,7 @@ const ChangePassword = observer(
 
             toast.success('password has successfully changed.')
             form.clear()
+            setChangePassword(false)
             console.log(updatedUsers)
         }
 

@@ -4,6 +4,7 @@ interface appliedLeaves {
     subject: string
     date: string
     status: string
+    disapproveComment: string
 }
 
 interface disapproveLeavesComments extends appliedLeaves {

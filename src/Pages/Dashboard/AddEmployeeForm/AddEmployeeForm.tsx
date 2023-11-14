@@ -122,8 +122,8 @@ const AddEmployeeForm: FC<Props> = observer(
                 onError: (error: string) => console.log(error),
             })
         }
-        console.log(employeesList)
-        console.log(filteredList)
+        // console.log(employeesList)
+        // console.log(filteredList)
         return (
             <StyledModal
                 open={open}

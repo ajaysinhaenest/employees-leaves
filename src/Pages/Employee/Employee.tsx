@@ -25,6 +25,7 @@ const Employee = () => {
         const loginUser: IUser =
             JSON.parse(localStorage.getItem('loginUser') || '') || user
 
+        console.log(!user.availableLeaves)
         setUser(loginUser)
     }, [changePassword, isApply])
 
@@ -51,7 +52,11 @@ const Employee = () => {
                         Name: {user.firstName + ' ' + user.lastName}
                     </Typography>
                     <Typography>Email: {user.email}</Typography>
-                    <Typography>Total No. of leaves: {user.leaves}</Typography>
+                    <Typography>
+                        {!user.availableLeaves &&
+                            'You can not take more leaves.'}
+                        Total No. of leaves: {user.leaves}
+                    </Typography>
                     {/* <Typography>
                         Status: {user.block ? 'blocked' : 'active'}
                     </Typography> */}

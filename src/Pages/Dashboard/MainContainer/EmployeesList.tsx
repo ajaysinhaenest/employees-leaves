@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import {
     Button,
@@ -13,12 +14,39 @@ import {
 } from '@mui/material'
 import { inject, observer } from 'mobx-react'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
+import LeavesNotification from './LeavesNotification'
+
+interface ILeaves {
+    name: string
+    email: string
+    subject: string
+    date: string
+    status: string
+}
 
 interface Props {
     filteredList: IEmployee[]
     setFilteredList: React.Dispatch<React.SetStateAction<IEmployee[]>>
 }
+
 const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
+    const [appliedLeaves, setAppliedLeaves] = useState<ILeaves[]>([])
+    const [filteredData, setFilteredData] = useState<IEmployee>({
+        firstName: '',
+        lastName: '',
+        email: '',
+        admin: false,
+        leaves: 0,
+        availableLeaves: 0,
+        password: '',
+        block: false,
+        blockCount: 0,
+        appliedLeaves: [],
+        disapproveLeavesComments: [],
+    })
+
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+
     const handleBlockUser = (email: string) => {
         const employeesList: IEmployee[] = JSON.parse(
             localStorage.getItem('employeesList') || '',
@@ -31,20 +59,14 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
 
         const updatedEmployeesList = employeesList.map((el) => {
             if (el.email === email) {
-                return {
-                    ...el,
-                    block: false,
-                }
+                el.block = false
             }
             return el
         })
 
         const updatedUsers = users.map((el) => {
             if (el.email === email) {
-                return {
-                    ...el,
-                    block: false,
-                }
+                el.block = false
             }
             return el
         })
@@ -60,7 +82,22 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
         localStorage.setItem('loginUser', JSON.stringify(updatedUser))
     }
 
-    console.log(filteredList)
+    const handleAppliedLeaves = (email: string) => {
+        setIsNotificationOpen(!isNotificationOpen)
+
+        const filteredData = filteredList.find((el) => el.email === email)
+
+        if (filteredData) {
+            setAppliedLeaves(
+                filteredData.appliedLeaves.filter(
+                    (el) => el.status === 'pending',
+                ),
+            )
+            setFilteredData(filteredData)
+        }
+    }
+
+    // console.log(filteredList)
     return (
         <Box mt={1}>
             <TableContainer component={Paper}>
@@ -70,7 +107,10 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                             <TableCell>First Name</TableCell>
                             <TableCell>Last Name</TableCell>
                             <TableCell>Email</TableCell>
-                            <TableCell>No. of Leaves</TableCell>
+                            <TableCell>Total Leaves</TableCell>
+                            <TableCell>available Leaves</TableCell>
+                            <TableCell>Applied Leaves</TableCell>
+                            {/* <TableCell>Applied Leaves</TableCell> */}
                             <TableCell>Status</TableCell>
                         </TableRow>
                     </TableHead>
@@ -81,6 +121,21 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                                 <TableCell>{employee.lastName}</TableCell>
                                 <TableCell>{employee.email}</TableCell>
                                 <TableCell>{employee.leaves}</TableCell>
+                                <TableCell>
+                                    {employee.availableLeaves}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        size='small'
+                                        variant='outlined'
+                                        color='success'
+                                        onClick={() =>
+                                            handleAppliedLeaves(employee.email)
+                                        }
+                                    >
+                                        Leaves Details
+                                    </Button>
+                                </TableCell>
                                 <TableCell>
                                     {employee.block ? (
                                         <Box display='flex' gap={1}>
@@ -123,6 +178,14 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <LeavesNotification
+                appliedLeavesData={appliedLeaves}
+                setAppliedLeaves={setAppliedLeaves}
+                filteredData={filteredData}
+                setFilteredData={setFilteredData}
+                open={isNotificationOpen}
+                setOpen={setIsNotificationOpen}
+            />
         </Box>
     )
 })

@@ -1,9 +1,11 @@
-import { Box, Typography } from '@mui/material'
+import { Badge, Box, Typography } from '@mui/material'
+import { Mail } from '@mui/icons-material'
 import Heading from './Heading'
 import EmployeesList from './EmployeesList'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import Searchbar from './Searchbar'
 import { useState } from 'react'
+import LeavesNotification from './LeavesNotification'
 
 interface Props {
     employeesList: IEmployee[]
@@ -18,7 +20,7 @@ const MainContainer = ({
     employeesList,
     setEmployeesList,
 }: Props) => {
-    // const [filteredList, setFilteredList] = useState<IEmployee[]>(employeesList)
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
     const handleFilter = (e: React.FormEvent, q: string) => {
         e.preventDefault()

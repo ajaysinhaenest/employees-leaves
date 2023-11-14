@@ -74,7 +74,7 @@ const LoginForm = observer(() => {
             return
         }
 
-        if (loginUser.admin) {
+        if (loginUser.admin && loginUser.password !== password) {
             toast.error('Login failed. Check your credentials.')
             toast.error(`hint: ${loginUser.password.slice(0, 8)}`)
             return

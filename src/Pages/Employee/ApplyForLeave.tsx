@@ -40,7 +40,7 @@ const ApplyForLeave = ({ user, isApply, setIsApply }: Props) => {
 
         console.log(users)
         console.log(employees)
-        debugger
+        // debugger
         if (subject === '') {
             toast.error('Kindly Provide your subject.')
             return
@@ -54,6 +54,7 @@ const ApplyForLeave = ({ user, isApply, setIsApply }: Props) => {
             subject: subject,
             date: date,
             status: 'pending',
+            disapproveComment: '',
         }
 
         const updatedUsers = users.map((u) => {
@@ -70,15 +71,15 @@ const ApplyForLeave = ({ user, isApply, setIsApply }: Props) => {
             return el
         })
 
-        // localStorage.setItem('employeesList', JSON.stringify(updatedEmployees))
+        localStorage.setItem('employeesList', JSON.stringify(updatedEmployees))
 
-        // localStorage.setItem('users', JSON.stringify(updatedUsers))
+        localStorage.setItem('users', JSON.stringify(updatedUsers))
 
         setSubject('')
-        debugger
+        // debugger
         console.log('updated Employees', updatedEmployees)
         console.log('updated users', updatedUsers)
-        debugger
+        // debugger
     }
 
     return (
