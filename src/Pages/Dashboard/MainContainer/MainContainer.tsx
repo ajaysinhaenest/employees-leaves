@@ -3,7 +3,6 @@ import Heading from './Heading'
 import EmployeesList from './EmployeesList'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import Searchbar from './Searchbar'
-import { useState } from 'react'
 
 interface Props {
     employeesList: IEmployee[]
@@ -20,14 +19,14 @@ const MainContainer = ({
 }: Props) => {
     // const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
-    const handleFilter = (e: React.FormEvent, q: string) => {
-        e.preventDefault()
-
+    const handleFilter = (searchQuery: string) => {
         const data = employeesList.filter((e) => {
             const nameResults = (e.firstName + e.lastName)
                 .toLowerCase()
-                .includes(q.toLowerCase())
-            const emailResults = e.email.toLowerCase().includes(q.toLowerCase())
+                .includes(searchQuery.toLowerCase())
+            const emailResults = e.email
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
 
             return nameResults || emailResults
         })

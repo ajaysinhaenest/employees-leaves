@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
 import { Box, TextField, Button } from '@mui/material'
 
-const Searchbar = ({ handleFilter }: any) => {
+const Searchbar = ({ onFilterChange }: any) => {
     const [query, setQuery] = useState('')
-    // const handleFilter1 = (e: React.FormEvent) => {
-    //     e.preventDefault()
-    //     console.log('hello')
-    // }
 
     return (
         <Box width='50%' display='flex'>
@@ -21,8 +17,10 @@ const Searchbar = ({ handleFilter }: any) => {
                     />
                     <Button
                         variant='outlined'
-                        type='submit'
-                        onClick={(e) => handleFilter(e, query)}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            onFilterChange(query)
+                        }}
                     >
                         Submit
                     </Button>

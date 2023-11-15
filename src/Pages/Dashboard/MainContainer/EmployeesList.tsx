@@ -29,7 +29,7 @@ interface Props {
     setFilteredList: React.Dispatch<React.SetStateAction<IEmployee[]>>
 }
 
-const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
+const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
     const [appliedLeaves, setAppliedLeaves] = useState<ILeaves[]>([])
     const [filteredData, setFilteredData] = useState<IEmployee>({
         firstName: '',
@@ -47,29 +47,19 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
 
     const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
-    const handleBlockUser = (email: string) => {
+    const unBlockUser = (user: any) => {
         const employeesList: IEmployee[] = JSON.parse(
             localStorage.getItem('employeesList') || '',
         )
         const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
-
-        const user = users.find((u) => u.email === email)
-
+        const filteredUser = users.find((u) => u.email === user.email)
         const updatedUser = { ...user, block: false }
-
-        const updatedEmployeesList = employeesList.map((el) => {
-            if (el.email === email) {
-                el.block = false
-            }
-            return el
-        })
-
-        const updatedUsers = users.map((el) => {
-            if (el.email === email) {
-                el.block = false
-            }
-            return el
-        })
+        const updatedEmployeesList = employeesList.map((el) =>
+            el.email === user.email ? updatedUser : el,
+        )
+        const updatedUsers = users.map((el) =>
+            el.email === user.email ? updatedUser : el,
+        )
 
         localStorage.setItem(
             'employeesList',
@@ -84,9 +74,7 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
 
     const handleAppliedLeaves = (email: string) => {
         setIsNotificationOpen(!isNotificationOpen)
-
         const filteredData = filteredList.find((el) => el.email === email)
-
         if (filteredData) {
             setAppliedLeaves(filteredData.appliedLeaves)
             setFilteredData(filteredData)
@@ -139,13 +127,11 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                                                 color='initial'
                                             >
                                                 Not Active
-                                            </Typography>{' '}
+                                            </Typography>
                                             <Button
                                                 size='small'
                                                 onClick={() =>
-                                                    handleBlockUser(
-                                                        employee.email,
-                                                    )
+                                                    unBlockUser(employee)
                                                 }
                                             >
                                                 UnBlock
@@ -154,19 +140,6 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
                                     ) : (
                                         'Active'
                                     )}
-
-                                    {/* <Button
-                                        onClick={() =>
-                                            handleBlockUser(employee.email)
-                                        }
-                                    >
-                                        {employee.block ? 'Unblock' : 'Block'}
-                                    </Button> */}
-                                    {/* {employee.block ? (
-                                        <Button onClick={()=>handle} >UnBlock</Button>
-                                    ) : (
-                                        ''
-                                    )} */}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -183,6 +156,6 @@ const EmployeesList = observer(({ filteredList, setFilteredList }: Props) => {
             />
         </Box>
     )
-})
+}
 
-export default inject('employeeStore')(EmployeesList)
+export default inject('employeeStore')(observer(EmployeesList))

@@ -15,4 +15,21 @@ export class EmployeeStore {
     setEmployeesList = (data: IEmployee[]) => {
         this.employeesList = data
     }
+
+    updateEmployByEmail = (): IEmployee[] => {
+        try {
+            const abc = this.getEmployesList()
+            return abc
+        } catch (error) {
+            return []
+        }
+    }
+
+    getEmployesList = (): IEmployee[] => {
+        try {
+            return JSON.parse(localStorage.getItem('employeesList') || '') || []
+        } catch (error) {
+            return []
+        }
+    }
 }

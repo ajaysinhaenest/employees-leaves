@@ -22,13 +22,15 @@ const Employee = () => {
     const [isApply, setIsApply] = useState(false)
 
     useEffect(() => {
-        const loginUser: IUser =
-            JSON.parse(localStorage.getItem('loginUser') || '') || user
-
-        setUser(loginUser)
+        try {
+            const loginUser: IUser =
+                JSON.parse(localStorage.getItem('loginUser') || '') || user
+            setUser(loginUser)
+        } catch (error) {
+            console.error('Error parsing JSON:', error)
+        }
     }, [changePassword, isApply])
 
-    console.log(user)
     return (
         <Container>
             <Box

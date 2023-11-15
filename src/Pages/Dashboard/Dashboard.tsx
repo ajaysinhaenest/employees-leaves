@@ -13,9 +13,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         // localStorage.setItem('employeesList', JSON.stringify(employeesListData))
-
         // localStorage.setItem('users', JSON.stringify(usersListData))
-
         // const updateData = employeesListData.map((data) => {
         //     return {
         //         name: data.firstName + ' ' + data.lastName,
@@ -28,7 +26,6 @@ const Dashboard = () => {
         // })
         // console.log(updateData)
         // localStorage.setItem('users', JSON.stringify(updateData))
-
         const employeesListData =
             JSON.parse(localStorage.getItem('employeesList') || '') || []
 
