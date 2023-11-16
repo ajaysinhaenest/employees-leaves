@@ -4,7 +4,7 @@ import Sidebar from './Sidebar/Sidebar'
 import MainContainer from './MainContainer/MainContainer'
 import AddEmployeeForm from './AddEmployeeForm/AddEmployeeForm'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
-import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
+import localStorageService from '../../Shared/Services/localStorage.service'
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false)
@@ -12,11 +12,9 @@ const Dashboard = () => {
     const [filteredList, setFilteredList] = useState<IEmployee[]>([])
 
     useEffect(() => {
-        const employeesListData =
-            JSON.parse(localStorage.getItem('employeesList') || '') || []
-
-        setEmployeesList(employeesListData)
-        setFilteredList(employeesListData)
+        const returnedEmployeesList = localStorageService.getEmployeesList()
+        setEmployeesList(returnedEmployeesList)
+        setFilteredList(returnedEmployeesList)
     }, [])
 
     return (

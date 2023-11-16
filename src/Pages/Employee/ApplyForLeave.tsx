@@ -19,6 +19,7 @@ import { IUser } from '../../Shared/Interfaces/user.interface'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { randomDateFunction } from '../../Shared/Utils/helperFunctions'
 import CancelIcon from '@mui/icons-material/Cancel'
+import localStorageService from '../../Shared/Services/localStorage.service'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -42,20 +43,14 @@ const ApplyForLeave = ({ user, setUser, isApply, setIsApply }: Props) => {
     const [subject, setSubject] = useState('')
 
     const handleApplyForLeave = () => {
-        const users: IUser[] =
-            JSON.parse(localStorage.getItem('users') || '') || []
-        const employees: IEmployee[] =
-            JSON.parse(localStorage.getItem('employeesList') || '') || []
+        const employees: IEmployee[] = localStorageService.getEmployeesList()
+        const users: IUser[] = localStorageService.getUsersList()
 
-        console.log(users)
-        console.log(employees)
         if (subject === '') {
             toast.error('Kindly Provide your subject.')
             return
         }
-
         const date = randomDateFunction()
-
         const data = {
             name: user.firstName + ' ' + user.lastName,
             email: user.email,
@@ -69,32 +64,19 @@ const ApplyForLeave = ({ user, setUser, isApply, setIsApply }: Props) => {
             availableLeaves: user.availableLeaves - 1,
             appliedLeaves: [...user.appliedLeaves, data],
         }
+        const updatedUsersList = users.map((u) =>
+            u.email === user.email ? updatedLoginUser : u,
+        )
+        const updatedEmployeesList = employees.map((el) =>
+            el.email === user.email ? updatedLoginUser : el,
+        )
 
-        const updatedUsers = users.map((u) => {
-            if (u.email === user.email) {
-                return updatedLoginUser
-            }
-            return u
-        })
-
-        const updatedEmployees = employees.map((el) => {
-            if (el.email === user.email) {
-                return updatedLoginUser
-            }
-            return el
-        })
-
-        localStorage.setItem('employeesList', JSON.stringify(updatedEmployees))
-
-        localStorage.setItem('users', JSON.stringify(updatedUsers))
-
-        localStorage.setItem('loginUser', JSON.stringify(updatedLoginUser))
+        localStorageService.setEmployeesList(updatedEmployeesList)
+        localStorageService.setUsersList(updatedUsersList)
+        localStorageService.setLoginUser(updatedLoginUser)
 
         setUser(updatedLoginUser)
-
         setSubject('')
-        // console.log('updated Employees', updatedEmployees)
-        // console.log('updated users', updatedUsers)
     }
 
     return (

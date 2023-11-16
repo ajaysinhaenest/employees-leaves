@@ -8,6 +8,7 @@ import { loginFields } from './login.fields'
 import { toast } from 'react-toastify'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
+import localStorageService from '../../Shared/Services/localStorage.service'
 
 const LoginForm = () => {
     const [users, setUsers] = useState<IUser>({
@@ -28,69 +29,57 @@ const LoginForm = () => {
     const form = useMemo(() => getMobxReactFormValidation(loginFields), [])
 
     useEffect(() => {
-        const returnedEmployeesList = localStorage.getItem('employeesList')
-        const returnedUsersList = localStorage.getItem('users')
+        const returnedEmployeesList = localStorageService.checkEmployeesList()
+        const returnedUsersList = localStorageService.checkUsersList()
 
         if (!returnedEmployeesList)
-            localStorage.setItem(
-                'employeesList',
-                JSON.stringify(employeesListData),
-            )
-        if (!returnedUsersList)
-            localStorage.setItem('users', JSON.stringify(usersListData))
+            localStorageService.setEmployeesList(employeesListData)
+        if (!returnedUsersList) localStorageService.setUsersList(usersListData)
 
         const employeesList: IEmployee[] =
-            JSON.parse(localStorage.getItem('employeesList') || '') || []
-        const users: IUser[] =
-            JSON.parse(localStorage.getItem('users') || '') || []
-
-        const secondArrayMap = users.reduce((total, item) => {
+            localStorageService.getEmployeesList()
+        const usersList: IUser[] = localStorageService.getUsersList()
+        const usersListMap = usersList.reduce((total, item) => {
             total[item.email] = item.block
             return total
         }, {})
-
-        const updatedFirstArray = employeesList.map((item) => ({
+        const updatedEmployeesList = employeesList.map((item) => ({
             ...item,
-            block: secondArrayMap[item.email] || item.block,
+            block: usersListMap[item.email] || item.block,
         }))
 
-        localStorage.setItem('employeesList', JSON.stringify(updatedFirstArray))
+        localStorageService.setEmployeesList(updatedEmployeesList)
     }, [users])
 
-    const blockUnblock = (loginUser: IUser): IUser[] => {
-        const storedUsers: IUser[] =
-            JSON.parse(localStorage.getItem('users') || '') || []
-        const users = storedUsers.map((el) => {
+    const blockUnblock = (
+        loginUser: IUser,
+        returnedUsersList: IUser[],
+    ): IUser[] => {
+        const updatedUsersList = returnedUsersList.map((el) => {
             if (el.email === loginUser.email) {
                 el.block = loginUser.block
                 el.blockCount = loginUser.blockCount
             }
             return el
         })
-        localStorage.setItem('users', JSON.stringify(users))
-        localStorage.setItem('loginUser', JSON.stringify(loginUser))
-        return users
+        localStorageService.setUsersList(updatedUsersList)
+        localStorageService.setLoginUser(loginUser)
+        return updatedUsersList
     }
 
     const handleSubmit = () => {
         const { email, password } = form.values()
-
-        const storedUsers: IUser[] =
-            JSON.parse(localStorage.getItem('users') || '') || []
-
-        const loginUser = storedUsers.find((el) => el.email === email)
+        const returnedUsersList: IUser[] = localStorageService.getUsersList()
+        const loginUser = returnedUsersList.find((el) => el.email === email)
 
         if (!loginUser) {
             toast.error('User not found!.')
             return
         }
-
         if (loginUser.admin && loginUser.password !== password) {
             toast.error('Login failed. Check your credentials.')
-            // toast.error(`hint: ${loginUser.password.slice(0, 8)}`)
             return
         }
-
         if (loginUser.password !== password) {
             toast.error('Login failed. Check your credentials.')
             loginUser.blockCount = loginUser.blockCount + 1
@@ -102,7 +91,7 @@ const LoginForm = () => {
                 )
             }
             setUsers(loginUser)
-            blockUnblock(loginUser)
+            blockUnblock(loginUser, returnedUsersList)
             return
         }
 
@@ -110,7 +99,7 @@ const LoginForm = () => {
         loginUser.block = false
         loginUser.blockCount = 0
         setUsers(loginUser)
-        blockUnblock(loginUser)
+        blockUnblock(loginUser, returnedUsersList)
         navigate(loginUser.admin ? '/dashboard' : '/employee')
         form.clear()
     }

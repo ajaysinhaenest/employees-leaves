@@ -1,4 +1,4 @@
-import { Badge, Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import Heading from './Heading'
 import EmployeesList from './EmployeesList'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
@@ -15,11 +15,8 @@ const MainContainer = ({
     filteredList,
     setFilteredList,
     employeesList,
-    setEmployeesList,
 }: Props) => {
-    // const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-
-    const handleFilter = (searchQuery: string) => {
+    const onFilterChange = (searchQuery: string) => {
         const data = employeesList.filter((e) => {
             const nameResults = (e.firstName + e.lastName)
                 .toLowerCase()
@@ -33,12 +30,11 @@ const MainContainer = ({
 
         setFilteredList(data)
     }
-    // console.log(filteredList)
     return (
         <Box width='100%' pl={30} mx={6}>
             <Box display='flex' gap={12} alignItems='center'>
                 <Heading />
-                <Searchbar handleFilter={handleFilter} />
+                <Searchbar onFilterChange={onFilterChange} />
             </Box>
             <EmployeesList
                 filteredList={filteredList}

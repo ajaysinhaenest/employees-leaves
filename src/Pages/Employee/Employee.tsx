@@ -3,6 +3,7 @@ import { Box, Container, Typography, Button } from '@mui/material'
 import { IUser } from '../../Shared/Interfaces/user.interface'
 import ChangePassword from './ChangePassword'
 import ApplyForLeave from './ApplyForLeave'
+import localStorageService from '../../Shared/Services/localStorage.service'
 
 const Employee = () => {
     const [user, setUser] = useState<IUser>({
@@ -22,13 +23,15 @@ const Employee = () => {
     const [isApply, setIsApply] = useState(false)
 
     useEffect(() => {
-        try {
-            const loginUser: IUser =
-                JSON.parse(localStorage.getItem('loginUser') || '') || user
-            setUser(loginUser)
-        } catch (error) {
-            console.error('Error parsing JSON:', error)
-        }
+        const loginUser: IUser = localStorageService.getLoginUser() || user
+        setUser(loginUser)
+        // try {
+        //     const loginUser: IUser =
+        //         JSON.parse(localStorage.getItem('loginUser') || '') || user
+        //     setUser(loginUser)
+        // } catch (error) {
+        //     console.error('Error parsing JSON:', error)
+        // }
     }, [changePassword, isApply])
 
     return (

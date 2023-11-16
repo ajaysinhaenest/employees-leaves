@@ -16,6 +16,7 @@ import { EmployeeStore } from '../../../Shared/Stores/employee.store'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
 import { toast } from 'react-toastify'
 import CancelIcon from '@mui/icons-material/Cancel'
+import localStorageService from '../../../Shared/Services/localStorage.service'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -46,40 +47,29 @@ const AddEmployeeForm: FC<Props> = observer(
         filteredList,
         setFilteredList,
     }: Props) => {
-        const [users, setUsers] = useState<IUser[]>([])
-
+        const [usersList, setUsersList] = useState<IUser[]>([])
         const form = useMemo(
             () => getMobxReactFormValidation(employeeFields),
             [],
         )
 
         useEffect(() => {
-            // const storedEmployeesList =
-            //     JSON.parse(localStorage.getItem('employeesList') || '') || []
-
-            // setEmployeesList(storedEmployeesList)
-            // setFilteredList(storedEmployeesList)
-
-            const storedUsers =
-                JSON.parse(localStorage.getItem('users') || '') || []
-
-            if (storedUsers.length) {
-                setUsers(storedUsers)
-            }
+            const returnedUsersList = localStorageService.getUsersList()
+            setUsersList(returnedUsersList)
         }, [])
 
-        const handleAddEmployee = (e: React.FormEvent) => {
-            e.preventDefault()
+        const handleAddEmployee = () => {
             const { email } = form.values()
-            const storedData: IEmployee[] =
-                JSON.parse(localStorage.getItem('employeesList') || '') || []
-            const employee = storedData.filter((el) => el.email === email)
+            const returnedEmployeesList: IEmployee[] =
+                localStorageService.getEmployeesList()
+            const employee = returnedEmployeesList.find(
+                (el) => el.email === email,
+            )
 
-            if (employee.length) {
+            if (employee?.email) {
                 toast.error('employee already exist with that email')
                 return
             }
-
             form.submit({
                 onSuccess: () => {
                     const data = {
@@ -93,38 +83,28 @@ const AddEmployeeForm: FC<Props> = observer(
                         disapproveLeavesComments: [],
                     }
                     setFilteredList((prev) => [...prev, { ...data }])
-
-                    console.log(form.values())
-
                     setEmployeesList((prev) => [...prev, { ...data }])
-
-                    localStorage.setItem(
-                        'employeesList',
-                        JSON.stringify([...filteredList, { ...data }]),
-                    )
-                    setUsers((prevState) => [
+                    setUsersList((prevState) => [
                         ...prevState,
                         {
                             ...data,
                         },
                     ])
-                    localStorage.setItem(
-                        'users',
-                        JSON.stringify([
-                            ...users,
-                            {
-                                ...data,
-                            },
-                        ]),
-                    )
+
+                    localStorageService.setEmployeesList([
+                        ...filteredList,
+                        { ...data },
+                    ])
+                    localStorageService.setUsersList([
+                        ...usersList,
+                        { ...data },
+                    ])
                     form.clear()
                     setOpen(false)
                 },
                 onError: (error: string) => console.log(error),
             })
         }
-        // console.log(employeesList)
-        // console.log(filteredList)
         return (
             <StyledModal
                 open={open}
@@ -147,7 +127,7 @@ const AddEmployeeForm: FC<Props> = observer(
                     <Typography variant='h6' color='gray' textAlign='center'>
                         Add new Employee
                     </Typography>
-                    <form>
+                    <Box>
                         <TextField
                             size='small'
                             color='primary'
@@ -156,10 +136,6 @@ const AddEmployeeForm: FC<Props> = observer(
                             margin='normal'
                             {...form.$('firstName').bind()}
                         />
-
-                        {/* <Typography color='error' sx={{ mb: 1 }}>
-                        {form.$('title').error}
-                    </Typography> */}
                         <TextField
                             size='small'
                             color='primary'
@@ -168,9 +144,6 @@ const AddEmployeeForm: FC<Props> = observer(
                             margin='normal'
                             {...form.$('lastName').bind()}
                         />
-                        {/* <Typography color='error' sx={{ mb: 1 }}>
-                        {form.$('description').error}
-                    </Typography> */}
                         <TextField
                             size='small'
                             color='primary'
@@ -195,20 +168,15 @@ const AddEmployeeForm: FC<Props> = observer(
                             margin='normal'
                             {...form.$('leaves').bind()}
                         />
-                        {/* <Typography color='error' sx={{ mb: 1 }}>
-                        {form.$('date').error}
-                    </Typography> */}
-
                         <Button
                             variant='contained'
                             color='secondary'
                             fullWidth
-                            type='submit'
-                            onClick={(e) => handleAddEmployee(e)}
+                            onClick={handleAddEmployee}
                         >
                             Add Employee
                         </Button>
-                    </form>
+                    </Box>
                 </Box>
             </StyledModal>
         )

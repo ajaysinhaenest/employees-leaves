@@ -15,6 +15,7 @@ import {
 import { inject, observer } from 'mobx-react'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
 import LeavesNotification from './LeavesNotification'
+import localStorageService from '../../../Shared/Services/localStorage.service'
 
 interface ILeaves {
     name: string
@@ -31,7 +32,7 @@ interface Props {
 
 const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
     const [appliedLeaves, setAppliedLeaves] = useState<ILeaves[]>([])
-    const [filteredData, setFilteredData] = useState<IEmployee>({
+    const [filteredUser, setFilteredUser] = useState<IEmployee>({
         firstName: '',
         lastName: '',
         email: '',
@@ -48,28 +49,20 @@ const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
     const unBlockUser = (user: any) => {
-        const employeesList: IEmployee[] = JSON.parse(
-            localStorage.getItem('employeesList') || '',
-        )
-        const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
-        const filteredUser = users.find((u) => u.email === user.email)
+        const employeesList: IEmployee[] =
+            localStorageService.getEmployeesList()
+        const users: IUser[] = localStorageService.getUsersList()
         const updatedUser = { ...user, block: false }
         const updatedEmployeesList = employeesList.map((el) =>
             el.email === user.email ? updatedUser : el,
         )
-        const updatedUsers = users.map((el) =>
+        const updatedUsersList = users.map((el) =>
             el.email === user.email ? updatedUser : el,
         )
 
-        localStorage.setItem(
-            'employeesList',
-            JSON.stringify(updatedEmployeesList),
-        )
-
-        localStorage.setItem('users', JSON.stringify(updatedUsers))
-        setFilteredList(updatedEmployeesList)
-
-        localStorage.setItem('loginUser', JSON.stringify(updatedUser))
+        localStorageService.setEmployeesList(updatedEmployeesList)
+        localStorageService.setUsersList(updatedUsersList)
+        localStorageService.setLoginUser(updatedUser)
     }
 
     const handleAppliedLeaves = (email: string) => {
@@ -77,11 +70,10 @@ const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
         const filteredData = filteredList.find((el) => el.email === email)
         if (filteredData) {
             setAppliedLeaves(filteredData.appliedLeaves)
-            setFilteredData(filteredData)
+            setFilteredUser(filteredData)
         }
     }
 
-    // console.log(filteredList)
     return (
         <Box mt={1}>
             <TableContainer component={Paper}>
@@ -98,7 +90,7 @@ const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredList?.map((employee, index) => (
+                        {filteredList.map((employee, index) => (
                             <TableRow key={index}>
                                 <TableCell>{employee.firstName}</TableCell>
                                 <TableCell>{employee.lastName}</TableCell>
@@ -149,8 +141,8 @@ const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
             <LeavesNotification
                 appliedLeavesData={appliedLeaves}
                 setAppliedLeaves={setAppliedLeaves}
-                filteredData={filteredData}
-                setFilteredData={setFilteredData}
+                filteredUser={filteredUser}
+                setFilteredUser={setFilteredUser}
                 open={isNotificationOpen}
                 setOpen={setIsNotificationOpen}
             />

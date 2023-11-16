@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { IUser } from '../Interfaces/user.interface'
 import Dashboard from '../../Pages/Dashboard/Dashboard'
 import Employee from '../../Pages/Employee/Employee'
+import localStorageService from '../Services/localStorage.service'
 
 const Authentication = () => {
     const [loginUser, setLoginUser] = useState<IUser>({
@@ -21,18 +22,18 @@ const Authentication = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const user = localStorage.getItem('loginUser')
+        const user = localStorageService.checkLoginUser()
         if (!user) navigate('/')
 
         try {
-            const loginUser: IUser = JSON.parse(user || '')
-            setLoginUser(loginUser)
+            const returnedUser = localStorageService.getLoginUser() || loginUser
+            setLoginUser(returnedUser)
         } catch (error) {
             console.error('Error parsing JSON:', error)
         }
     }, [])
 
-    loginUser.admin ? navigate('/dashboard') : navigate('/employee')
+    // loginUser.admin ? navigate('/dashboard') : navigate('/employee')
 
     return (
         <Routes>

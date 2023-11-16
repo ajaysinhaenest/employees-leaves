@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, TextField, Button } from '@mui/material'
 
 const Searchbar = ({ onFilterChange }: any) => {
-    const [query, setQuery] = useState('')
+    const [searchQuery, setSearchQuery] = useState('')
 
     return (
         <Box width='50%' display='flex'>
@@ -11,18 +11,19 @@ const Searchbar = ({ onFilterChange }: any) => {
                     <TextField
                         fullWidth
                         size='small'
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         variant='outlined'
                     />
                     <Button
                         variant='outlined'
+                        type='submit'
                         onClick={(e) => {
                             e.preventDefault()
-                            onFilterChange(query)
+                            onFilterChange(searchQuery)
                         }}
                     >
-                        Submit
+                        Search
                     </Button>
                 </Box>
             </form>

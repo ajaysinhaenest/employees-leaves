@@ -11,6 +11,8 @@ import { inject, observer } from 'mobx-react'
 import { IEmployee } from '../../../Shared/Interfaces/employee.interface'
 import { IUser } from '../../../Shared/Interfaces/user.interface'
 import CancelIcon from '@mui/icons-material/Cancel'
+import localStorageService from '../../../Shared/Services/localStorage.service'
+import { leaveStatusEnum } from '../../../Shared/Enums/leaveStatus.enum'
 
 interface ILeaves {
     name: string
@@ -34,15 +36,14 @@ const StyledModal = styled(Modal)({
 interface Props {
     appliedLeavesData: ILeaves[]
     setAppliedLeaves: React.Dispatch<React.SetStateAction<ILeaves[]>>
-    filteredData: IEmployee
-    setFilteredData: React.Dispatch<React.SetStateAction<IEmployee>>
+    filteredUser: IEmployee
+    setFilteredUser: React.Dispatch<React.SetStateAction<IEmployee>>
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const LeavesNotification = ({
-    filteredData,
-    setFilteredData,
+    filteredUser,
     appliedLeavesData,
     setAppliedLeaves,
     open,
@@ -51,111 +52,45 @@ const LeavesNotification = ({
     const [commentQuery, setCommentQuery] = useState('')
     const [reject, setReject] = useState('')
 
-    const handleApprove = (sub: string) => {
-        const employeesList: IEmployee[] = JSON.parse(
-            localStorage.getItem('employeesList') || '',
-        )
-        const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
-
-        const totalLeaves =
-            employeesList.find((el) => el.email === filteredData.email)
-                ?.appliedLeaves || []
-
-        console.log(totalLeaves)
-
-        const updatedAppliedLeaves = totalLeaves.map((el) => {
-            if (el.subject === sub) {
-                el.status = 'approved'
-            }
-            return el
-        })
-
-        setAppliedLeaves(updatedAppliedLeaves)
-
-        const updatedFilteredData = {
-            ...filteredData,
-            appliedLeaves: updatedAppliedLeaves,
+    const onApproveDisapproveLeave = (sub: string, btnQuery: string) => {
+        if (btnQuery === leaveStatusEnum.REJECTED) {
+            setReject(sub)
+            return
         }
-
-        const updatedEmployeesList = employeesList.map((el) => {
-            if (el.email === filteredData.email) {
-                return updatedFilteredData
-            }
-            return el
-        })
-
-        const updatedUsers = users.map((el) => {
-            if (el.email === filteredData.email) {
-                return updatedFilteredData
-            }
-            return el
-        })
-        console.log(updatedEmployeesList)
-        console.log(updatedUsers)
-
-        localStorage.setItem(
-            'employeesList',
-            JSON.stringify(updatedEmployeesList),
-        )
-
-        localStorage.setItem('users', JSON.stringify(updatedUsers))
-    }
-
-    const handleReject = (sub: string) => {
-        setReject(sub)
-        console.log('reject')
-    }
-
-    const handleComment = (sub: string) => {
-        const employeesList: IEmployee[] = JSON.parse(
-            localStorage.getItem('employeesList') || '',
-        )
-        const users: IUser[] = JSON.parse(localStorage.getItem('users') || '')
-
+        const employeesList: IEmployee[] =
+            localStorageService.getEmployeesList()
+        const users: IUser[] = localStorageService.getUsersList()
         const totalLeaves =
-            employeesList.find((el) => el.email === filteredData.email)
+            employeesList.find((el) => el.email === filteredUser.email)
                 ?.appliedLeaves || []
-
-        console.log(totalLeaves)
-
         const updatedAppliedLeaves = totalLeaves.map((el) => {
-            if (el.subject === sub) {
-                el.status = 'rejected'
+            if (el.subject === sub && btnQuery === leaveStatusEnum.APPROVED) {
+                el.status = leaveStatusEnum.APPROVED
+            }
+            if (
+                el.subject === sub &&
+                btnQuery === leaveStatusEnum.ADD_COMMENT
+            ) {
+                el.status = leaveStatusEnum.ADD_COMMENT
                 el.disapproveComment = commentQuery
             }
             return el
         })
-
         setAppliedLeaves(updatedAppliedLeaves)
-
         const updatedFilteredData = {
-            ...filteredData,
-            availableLeaves: filteredData.availableLeaves + 1,
+            ...filteredUser,
             appliedLeaves: updatedAppliedLeaves,
         }
 
-        const updatedEmployeesList = employeesList.map((el) => {
-            if (el.email === filteredData.email) {
-                return updatedFilteredData
-            }
-            return el
-        })
-
-        const updatedUsers = users.map((el) => {
-            if (el.email === filteredData.email) {
-                return updatedFilteredData
-            }
-            return el
-        })
-        console.log(updatedEmployeesList)
-        console.log(updatedUsers)
-
-        localStorage.setItem(
-            'employeesList',
-            JSON.stringify(updatedEmployeesList),
+        const updatedEmployeesList = employeesList.map((el) =>
+            el.email === filteredUser.email ? updatedFilteredData : el,
         )
+        const updatedUsersList = users.map((el) =>
+            el.email === filteredUser.email ? updatedFilteredData : el,
+        )
+        localStorageService.setEmployeesList(updatedEmployeesList)
+        localStorageService.setUsersList(updatedUsersList)
 
-        localStorage.setItem('users', JSON.stringify(updatedUsers))
         setCommentQuery('')
         setReject('')
     }
@@ -216,9 +151,12 @@ const LeavesNotification = ({
                                             size='small'
                                             variant='outlined'
                                             color='error'
-                                            onClick={() =>
-                                                handleReject(el.subject)
-                                            }
+                                            onClick={() => {
+                                                onApproveDisapproveLeave(
+                                                    el.subject,
+                                                    leaveStatusEnum.REJECTED,
+                                                )
+                                            }}
                                         >
                                             Reject
                                         </Button>
@@ -226,9 +164,12 @@ const LeavesNotification = ({
                                             size='small'
                                             variant='outlined'
                                             color='success'
-                                            onClick={() =>
-                                                handleApprove(el.subject)
-                                            }
+                                            onClick={() => {
+                                                onApproveDisapproveLeave(
+                                                    el.subject,
+                                                    leaveStatusEnum.APPROVED,
+                                                )
+                                            }}
                                         >
                                             Approve
                                         </Button>
@@ -246,9 +187,12 @@ const LeavesNotification = ({
                                         placeholder='Enter your comment'
                                     />
                                     <Button
-                                        onClick={() =>
-                                            handleComment(el.subject)
-                                        }
+                                        onClick={() => {
+                                            onApproveDisapproveLeave(
+                                                el.subject,
+                                                leaveStatusEnum.ADD_COMMENT,
+                                            )
+                                        }}
                                     >
                                         Submit
                                     </Button>
