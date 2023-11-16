@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { IUser } from '../Interfaces/user.interface'
 import Dashboard from '../../Pages/Dashboard/Dashboard'
 import Employee from '../../Pages/Employee/Employee'

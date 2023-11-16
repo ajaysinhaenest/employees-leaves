@@ -2,8 +2,8 @@ import { createBrowserRouter, Outlet } from 'react-router-dom'
 import Login from './Pages/Login/Login'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Employee from './Pages/Employee/Employee'
-import Dashboard from './Pages/Dashboard/Dashboard'
+// import Employee from './Pages/Employee/Employee'
+// import Dashboard from './Pages/Dashboard/Dashboard'
 
 import Authentication from './Shared/Components/Authentication'
 

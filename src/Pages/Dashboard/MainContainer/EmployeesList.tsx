@@ -59,7 +59,7 @@ const EmployeesList = ({ filteredList, setFilteredList }: Props) => {
         const updatedUsersList = users.map((el) =>
             el.email === user.email ? updatedUser : el,
         )
-
+        setFilteredList(updatedEmployeesList)
         localStorageService.setEmployeesList(updatedEmployeesList)
         localStorageService.setUsersList(updatedUsersList)
         localStorageService.setLoginUser(updatedUser)

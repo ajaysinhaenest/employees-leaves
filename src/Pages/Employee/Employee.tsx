@@ -25,13 +25,6 @@ const Employee = () => {
     useEffect(() => {
         const loginUser: IUser = localStorageService.getLoginUser() || user
         setUser(loginUser)
-        // try {
-        //     const loginUser: IUser =
-        //         JSON.parse(localStorage.getItem('loginUser') || '') || user
-        //     setUser(loginUser)
-        // } catch (error) {
-        //     console.error('Error parsing JSON:', error)
-        // }
     }, [changePassword, isApply])
 
     return (

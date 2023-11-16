@@ -51,10 +51,8 @@ const LoginForm = () => {
         localStorageService.setEmployeesList(updatedEmployeesList)
     }, [users])
 
-    const blockUnblock = (
-        loginUser: IUser,
-        returnedUsersList: IUser[],
-    ): IUser[] => {
+    const blockUnblock = (loginUser: IUser): IUser[] => {
+        const returnedUsersList: IUser[] = localStorageService.getUsersList()
         const updatedUsersList = returnedUsersList.map((el) => {
             if (el.email === loginUser.email) {
                 el.block = loginUser.block
@@ -80,6 +78,10 @@ const LoginForm = () => {
             toast.error('Login failed. Check your credentials.')
             return
         }
+        if (loginUser.block) {
+            toast.error('You have tried max number of limit. You are blocked..')
+            return
+        }
         if (loginUser.password !== password) {
             toast.error('Login failed. Check your credentials.')
             loginUser.blockCount = loginUser.blockCount + 1
@@ -91,7 +93,7 @@ const LoginForm = () => {
                 )
             }
             setUsers(loginUser)
-            blockUnblock(loginUser, returnedUsersList)
+            blockUnblock(loginUser)
             return
         }
 
@@ -99,7 +101,7 @@ const LoginForm = () => {
         loginUser.block = false
         loginUser.blockCount = 0
         setUsers(loginUser)
-        blockUnblock(loginUser, returnedUsersList)
+        blockUnblock(loginUser)
         navigate(loginUser.admin ? '/dashboard' : '/employee')
         form.clear()
     }

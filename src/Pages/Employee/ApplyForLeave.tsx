@@ -20,6 +20,7 @@ import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { randomDateFunction } from '../../Shared/Utils/helperFunctions'
 import CancelIcon from '@mui/icons-material/Cancel'
 import localStorageService from '../../Shared/Services/localStorage.service'
+import { leaveStatusEnum } from '../../Shared/Enums/leaveStatus.enum'
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -56,7 +57,7 @@ const ApplyForLeave = ({ user, setUser, isApply, setIsApply }: Props) => {
             email: user.email,
             subject: subject,
             date: date,
-            status: 'pending',
+            status: leaveStatusEnum.PENDING,
             disapproveComment: '',
         }
         const updatedLoginUser = {
