@@ -6,12 +6,10 @@ import Employee from './Pages/Employee/Employee'
 import Dashboard from './Pages/Dashboard/Dashboard'
 
 import Authentication from './Shared/Components/Authentication'
-import { employeesListData, usersListData } from './Shared/Utils/Constant'
 
 function App() {
     return (
         <>
-            Hello
             <Outlet />
             <ToastContainer />
         </>

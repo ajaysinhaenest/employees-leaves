@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
 import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
 
-const LoginForm = observer(() => {
+const LoginForm = () => {
     const [users, setUsers] = useState<IUser>({
         firstName: '',
         lastName: '',
@@ -158,6 +158,6 @@ const LoginForm = observer(() => {
             </form>
         </Box>
     )
-})
+}
 
-export default inject('employeeStore')(LoginForm)
+export default inject('employeeStore')(observer(LoginForm))
