@@ -46,10 +46,12 @@ const Employee = () => {
                     Employee Profile
                 </Typography>
                 <Box>
-                    <Typography>
+                    <Typography variant='subtitle1'>
                         Name: {user.firstName + ' ' + user.lastName}
                     </Typography>
-                    <Typography>Email: {user.email}</Typography>
+                    <Typography variant='subtitle1'>
+                        Email: {user.email}
+                    </Typography>
                     <Typography>
                         {!user.availableLeaves ? (
                             <Typography color='error'>
