@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { loginFields } from './login.fields'
 import { toast } from 'react-toastify'
 import { IEmployee } from '../../Shared/Interfaces/employee.interface'
+import { employeesListData, usersListData } from '../../Shared/Utils/Constant'
 
 const LoginForm = observer(() => {
     const [users, setUsers] = useState<IUser>({
@@ -27,9 +28,19 @@ const LoginForm = observer(() => {
     const form = useMemo(() => getMobxReactFormValidation(loginFields), [])
 
     useEffect(() => {
+        const returnedEmployeesList = localStorage.getItem('employeesList')
+        const returnedUsersList = localStorage.getItem('users')
+
+        if (!returnedEmployeesList)
+            localStorage.setItem(
+                'employeesList',
+                JSON.stringify(employeesListData),
+            )
+        if (!returnedUsersList)
+            localStorage.setItem('users', JSON.stringify(usersListData))
+
         const employeesList: IEmployee[] =
             JSON.parse(localStorage.getItem('employeesList') || '') || []
-
         const users: IUser[] =
             JSON.parse(localStorage.getItem('users') || '') || []
 

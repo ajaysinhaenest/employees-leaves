@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { IUser } from '../Interfaces/user.interface'
+import Dashboard from '../../Pages/Dashboard/Dashboard'
+import Employee from '../../Pages/Employee/Employee'
 
-const PrivateRoute = () => {
+const Authentication = () => {
     const [loginUser, setLoginUser] = useState<IUser>({
         firstName: '',
         lastName: '',
@@ -32,7 +34,12 @@ const PrivateRoute = () => {
 
     loginUser.admin ? navigate('/dashboard') : navigate('/employee')
 
-    return <Outlet />
+    return (
+        <Routes>
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='employee' element={<Employee />} />
+        </Routes>
+    )
 }
 
-export default PrivateRoute
+export default Authentication

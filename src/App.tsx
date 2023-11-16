@@ -4,11 +4,14 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Employee from './Pages/Employee/Employee'
 import Dashboard from './Pages/Dashboard/Dashboard'
-import PrivateRoute from './Shared/Components/PrivateRoute'
+
+import Authentication from './Shared/Components/Authentication'
+import { employeesListData, usersListData } from './Shared/Utils/Constant'
 
 function App() {
     return (
         <>
+            Hello
             <Outlet />
             <ToastContainer />
         </>
@@ -25,24 +28,8 @@ export const router = createBrowserRouter([
                 element: <Login />,
             },
             {
-                path: '/dashboard',
-                element: <PrivateRoute />,
-                children: [
-                    {
-                        path: '/dashboard',
-                        element: <Dashboard />,
-                    },
-                ],
-            },
-            {
-                path: '/employee',
-                element: <PrivateRoute />,
-                children: [
-                    {
-                        path: '/employee',
-                        element: <Employee />,
-                    },
-                ],
+                path: '/*',
+                element: <Authentication />,
             },
         ],
     },
